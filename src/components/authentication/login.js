@@ -36,12 +36,16 @@ function LoginPage() {
                         <input type='text' name='email' placeholder='Email' value={email} pattern='/\w+\@\w+.com/i' onChange={(event) => setEmail(event.target.value)}></input>
                         <input type='password' name='pass' placeholder='Password' value={password} onChange={(event) => setPassword(event.target.value)}></input>
                         <a href="_blank" className='hover:text-white underline'>Forgot Password?</a>
+                        <div className ="flex justify-center space-x-4 mt-4" >
                         <button className='block bg-blue-600 hover:bg-blue-800 rounded-lg text-white font-semibold w-1/2 py-4 mt-4 m-auto' onClick={signIn}>Login</button>
+                        <button className='block bg-blue-600 hover:bg-blue-800 rounded-lg text-white font-semibold w-1/2 py-4 mt-4 m-auto' onClick={() => navigate('/register')}>Register</button>
+                        </div>   
                     </div>
-                    {error && (<p className='my-2 text-red-500'>Invalid credentials!</p>)}
+                    {error && (<p className='my-2 text-red-500'>Invalid email or password.</p>)}
                 </div>
             </div>
         </div>
+        
     );
 }
 
