@@ -1,8 +1,9 @@
 import './login.css';
-import {getAuth, createUserWithEmailAndPassword, updateProfile} from 'firebase/auth';
+import {createUserWithEmailAndPassword, updateProfile} from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import {useNavigate} from 'react-router-dom';
 import {useState} from 'react';
-import app from '../../firebase/firebaseConfig';
+import {auth, db} from '../../firebase/firebaseConfig';
 
 //Optional(Icons to email/pass)
 
@@ -38,18 +39,28 @@ function RegistrationPage() {
     }
 
     const signUp = async () => {
-        const auth = getAuth(app);
-
         try {
+            // Create a new account with given email, pass, display name
             const userCred = await createUserWithEmailAndPassword(auth, email, password);
             await updateProfile(userCred.user, {
                 displayName: name
             });
+
+            // Save user data to Firestore
+            await setDoc(doc(db, 'users', userCred.user.uid), {
+                uid: userCred.user.uid,
+                email: userCred.user.email,
+                displayname: name,
+                createdAt: new Date(),
+                pomodorosCompleted: 0
+            });
+
+            // Navigate to the home page
             navigate('/home');
             console.log('User signed up":', userCred.user);
             console.log('Display Name:', userCred.user.displayName)
         } catch (err) {
-            console.log("Couldn't create account");
+            console.log("Couldn't create account", err);
         }
     }
 

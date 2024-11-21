@@ -14,12 +14,14 @@ function LoginPage() {
 
     const signIn = async () => {
         try {
+            // Attempt to login, if successful go to home page else display error message
             const userCred = await signInWithEmailAndPassword(auth, email, password);
             navigate('/home');
             console.log(userCred.user);
             setError(false);
         } catch (err) {
             setError(true);
+            console.log(err);
         }
     }
 
@@ -31,7 +33,6 @@ function LoginPage() {
                     <div className='bg-sky-400 p-5 flex-col rounded-[10px]'>
                         <input type='text' name='email' placeholder='Email' onChange={(event) => setEmail(event.target.value)}></input>
                         <input type='password' name='pass' placeholder='Password' onChange={(event) => setPassword(event.target.value)} onKeyDown={(event) => {if(event.key === 'Enter' && email !== '') {signIn()}}}></input>
-                        <a href="_blank" className='hover:text-white underline'>Forgot Password?</a>
                         <div className ="flex justify-center space-x-4 mt-4">
                             <button className='block bg-blue-600 hover:bg-blue-800 rounded-lg text-white font-semibold w-1/2 py-4 mt-4' onClick={() => navigate('/register')}>Register</button>
                             <button className='block bg-blue-600 hover:bg-blue-800 rounded-lg text-white font-semibold w-1/2 py-4 mt-4' onClick={signIn}>Login</button>
