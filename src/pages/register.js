@@ -3,7 +3,7 @@ import {createUserWithEmailAndPassword, updateProfile} from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import {useNavigate} from 'react-router-dom';
 import {useState} from 'react';
-import {auth, db} from '../../firebase/firebaseConfig';
+import {auth, db} from '../firebase/firebaseConfig';
 
 //Optional(Icons to email/pass)
 

@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -18,5 +18,8 @@ const app = initializeApp(firebaseConfig);
 // Export Firebase services
 const auth = getAuth(app); // Authentication
 const db = getFirestore(app); // Firestore database
+
+//Set user persistence to local
+setPersistence(auth, browserLocalPersistence);
 
 export {auth, db}
