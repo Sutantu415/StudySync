@@ -4,7 +4,6 @@ import LoginPage from "./pages/login";
 import RoomPage from "./pages/roomPage";
 import RegisterPage from "./pages/register";
 import "./App.css";
-import HomePage from "./pages/home";
 import TimerPage from "./pages/timer/timer";
 import SettingsPage from "./components/timerComponents/Settings";
 import { useState } from "react";
@@ -19,7 +18,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/home" element={<HomePage />} />
+        <Route path="/home" element={<RoomPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
         <Route
