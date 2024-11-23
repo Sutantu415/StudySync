@@ -2,7 +2,7 @@ import './login.css';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import {useNavigate} from 'react-router-dom';
 import {useState} from 'react';
-import {auth} from '../../firebase/firebaseConfig';
+import {auth} from '../firebase/firebaseConfig';
 
 //Optional(Icons to email/pass)
 
