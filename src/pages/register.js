@@ -1,52 +1,47 @@
 import './login.css';
-import {createUserWithEmailAndPassword, updateProfile} from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
-import {useNavigate} from 'react-router-dom';
-import {useState} from 'react';
-import {auth, db} from '../firebase/firebaseConfig';
 
-//Optional(Icons to email/pass)
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { auth, db } from '../firebase/firebaseConfig';
 
 function RegistrationPage() {
-    //Variables
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
     const navigate = useNavigate();
 
-    //Regex patterns that must be followed for each input
     const patterns = {
         email: /\w+@\w+.com/i,
         name: /\w{5,}/i,
         password: /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/
-    }
+    };
 
     const validate = () => {
-        //Check for empty fields (if they are empty then trigger the error message and exit)
-        if(!email || !name || !password) {
+        if (!email || !name || !password) {
             setError(true);
             return;
         }
 
-        //Check for valid inputs
-        if(patterns.email.test(email) && patterns.name.test(name) && patterns.password.test(password)) {
+        if (
+            patterns.email.test(email) &&
+            patterns.name.test(name) &&
+            patterns.password.test(password)
+        ) {
             setError(false);
             signUp();
         } else {
             setError(true);
         }
-    }
+    };
 
     const signUp = async () => {
         try {
-            // Create a new account with given email, pass, display name
             const userCred = await createUserWithEmailAndPassword(auth, email, password);
-            await updateProfile(userCred.user, {
-                displayName: name
-            });
+            await updateProfile(userCred.user, { displayName: name });
 
-            // Save user data to Firestore
             await setDoc(doc(db, 'users', userCred.user.uid), {
                 uid: userCred.user.uid,
                 email: userCred.user.email,
@@ -55,33 +50,122 @@ function RegistrationPage() {
                 pomodorosCompleted: 0
             });
 
-            // Navigate to the home page
             navigate('/home');
-            console.log('User signed up":', userCred.user);
-            console.log('Display Name:', userCred.user.displayName)
+            console.log('User signed up:', userCred.user);
+            console.log('Display Name:', userCred.user.displayName);
         } catch (err) {
             console.log("Couldn't create account", err);
         }
-    }
+    };
 
     return (
-        <div className="flex min-h-screen justify-center bg-gradient-to-b from-indigo-900 via-blue-800 to-cyan-500">
-            <div className="flex w-2/3 justify-center">
-                <div>
-                    <h1 className="flex font-sans font-bold text-white text-5xl drop-shadow-lg mt-40 pb-5 justify-center">StudySync</h1>
-                    <div className='bg-sky-400 p-5 flex-col rounded-[10px]'>
-                        <input type='text' name='email' placeholder='Email' onChange={(event) => setEmail(event.target.value)}></input>
-                        <input type='text' name='name' placeholder='Display Name' onChange={(event) => setName(event.target.value)}></input>
-                        <input type='password' name='pass' placeholder='Password' onChange={(event) => setPassword(event.target.value)} onKeyDown={(event) => {if(event.key === 'Enter') {validate()}}}></input>
-                        <div className ="flex justify-center space-x-4 mt-4">
-                            <button className='block bg-blue-600 hover:bg-blue-800 rounded-lg text-white font-semibold w-1/2 py-4 mt-4' onClick={validate}>Sign Up</button>
-                        </div>
+        <div className="flex h-screen">
+            {/* Left side: Illustration */}
+            <div className="w-2/3 relative">
+                <img
+                    src="https://static.vecteezy.com/system/resources/previews/002/779/389/original/student-woman-with-laptop-studying-on-online-course-online-education-concept-illustration-flat-vector.jpg"
+                    alt="Illustration"
+                    className="h-full w-full object-cover"
+                />
+            </div>
+
+            {/* Right side: Registration Form */}
+            <div className="w-1/2 flex flex-col justify-center items-center bg-white">
+                <div className="w-3/4 max-w-md">
+                    {/* Logo */}
+                    <div className="flex justify-center mb-6">
+                        <img
+                            src="https://th.bing.com/th/id/OIP.6sNdGNp6mbrkxV4c29qi1QHaGt?rs=1&pid=ImgDetMain"
+                            alt="Company Logo"
+                            className="h-16"
+                        />
                     </div>
-                    {error && (<p className='my-2 text-red-500 text-center'>Invalidate Submission - Edit Message Later</p>)}
+
+                    {/* Form Title */}
+                    <h1 className="text-3xl font-bold text-center mb-6">Register</h1>
+
+                    {/* Email Input */}
+                    <div className="mb-4">
+                        <label
+                            htmlFor="email"
+                            className="block text-sm font-medium text-gray-700">
+                            Email<span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="Please enter email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                    </div>
+
+                    {/* Name Input */}
+                    <div className="mb-4">
+                        <label
+                            htmlFor="name"
+                            className="block text-sm font-medium text-gray-700">
+                            Display Name<span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            placeholder="Please enter display name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                    </div>
+
+                    {/* Password Input */}
+                    <div className="mb-4">
+                        <label
+                            htmlFor="password"
+                            className="block text-sm font-medium text-gray-700">
+                            Password<span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Please enter password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    validate();
+                                }
+                            }}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                    </div>
+
+                    {/* Register Button */}
+                    <div className="flex justify-center">
+                        <button
+                            onClick={validate}
+                            className="w-full py-2 px-4 bg-black text-white font-semibold rounded-md hover:bg-gray-800 transition">
+                            Sign Up
+                        </button>
+                    </div>
+                    <div className="flex justify-between mt-4">
+                            {/* Login Button */}
+                            <button
+                                onClick={() => navigate('/')}
+                                className="text-sm text-blue-600 hover:underline">
+                                Login
+                            </button>
+                    </div>
+
+                    {/* Error Message */}
+                    {error && (
+                        <p className="mt-4 text-sm text-red-500 text-center">
+                            Please ensure all fields are valid.
+                        </p>
+                    )}
                 </div>
             </div>
         </div>
-        
     );
 }
 
