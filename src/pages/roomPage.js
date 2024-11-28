@@ -1,12 +1,16 @@
 import { getAuth, signOut } from "firebase/auth";
 import { useUser } from "../contexts/userContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import CreateRoomPopup from "./roomHandle/createRoomPopup";
+import JoinRoomPopup from "./roomHandle/joinRoomPopup";
 
 function RoomPage() {
   // Variables
   const { user, loading } = useUser();
   const navigate = useNavigate();
+  const [showCreatePopup, setShowCreatePopup] = useState(false);
+  const [showJoinPopup, setShowJoinPopup] = useState(false);
 
   // If the user isn't logged in bring them back to the login page
   // Use useEffect to do this check when user changes (logout) and navigate is done rendering
@@ -23,10 +27,6 @@ function RoomPage() {
   if (!user) {
     return null;
   }
-  // if(!user.user) {
-  //     navigate('/');
-  //     return null;
-  // }
 
   const handleLogout = () => {
     // Logic for logging out
@@ -70,7 +70,7 @@ function RoomPage() {
           {/* Join a Room */}
           <div
             className="flex justify-center items-center bg-blue-500 hover:bg-blue-700 text-white font-bold text-2xl rounded-lg p-12 cursor-pointer"
-            onClick={() => console.log("Join a Room")}
+            onClick={() => setShowJoinPopup(true)}
           >
             Join a Room
           </div>
@@ -78,7 +78,7 @@ function RoomPage() {
           {/* Create a Room */}
           <div
             className="flex justify-center items-center bg-green-500 hover:bg-green-700 text-white font-bold text-2xl rounded-lg p-12 cursor-pointer"
-            onClick={() => console.log("Create a Room")}
+            onClick={() => setShowCreatePopup(true)}
           >
             Create a Room
           </div>
@@ -90,6 +90,8 @@ function RoomPage() {
           </div>
         </div>
       </div>
+      {showCreatePopup && <CreateRoomPopup onClose={() => setShowCreatePopup(false)} />}
+      {showJoinPopup && <JoinRoomPopup onClose={() => setShowJoinPopup(false)} />}
     </div>
   );
 }
