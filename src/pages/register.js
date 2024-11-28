@@ -60,7 +60,6 @@ function RegistrationPage() {
 
     return (
         <div className="flex h-screen">
-            {/* Left side: Illustration */}
             <div className="w-2/3 relative">
                 <img
                     src="https://static.vecteezy.com/system/resources/previews/002/779/389/original/student-woman-with-laptop-studying-on-online-course-online-education-concept-illustration-flat-vector.jpg"
@@ -69,10 +68,9 @@ function RegistrationPage() {
                 />
             </div>
 
-            {/* Right side: Registration Form */}
+            {/* Registration Form */}
             <div className="w-1/2 flex flex-col justify-center items-center bg-white">
                 <div className="w-3/4 max-w-md">
-                    {/* Logo */}
                     <div className="flex justify-center mb-6">
                         <img
                             src="https://th.bing.com/th/id/OIP.6sNdGNp6mbrkxV4c29qi1QHaGt?rs=1&pid=ImgDetMain"
@@ -80,10 +78,7 @@ function RegistrationPage() {
                             className="h-16"
                         />
                     </div>
-
-                    {/* Form Title */}
                     <h1 className="text-3xl font-bold text-center mb-6">Register</h1>
-
                     {/* Email Input */}
                     <div className="mb-4">
                         <label
@@ -149,15 +144,13 @@ function RegistrationPage() {
                         </button>
                     </div>
                     <div className="flex justify-between mt-4">
-                            {/* Login Button */}
-                            <button
-                                onClick={() => navigate('/')}
-                                className="text-sm text-blue-600 hover:underline">
-                                Login
-                            </button>
+                        {/* Login Button */}
+                        <button
+                            onClick={() => navigate('/')}
+                            className="text-sm text-blue-600 hover:underline">
+                            Login
+                        </button>
                     </div>
-
-                    {/* Error Message */}
                     {error && (
                         <p className="mt-4 text-sm text-red-500 text-center">
                             Please ensure all fields are valid.

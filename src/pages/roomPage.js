@@ -6,14 +6,11 @@ import CreateRoomPopup from "./roomHandle/createRoomPopup";
 import JoinRoomPopup from "./roomHandle/joinRoomPopup";
 
 function RoomPage() {
-  // Variables
   const { user, loading } = useUser();
   const navigate = useNavigate();
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [showJoinPopup, setShowJoinPopup] = useState(false);
 
-  // If the user isn't logged in bring them back to the login page
-  // Use useEffect to do this check when user changes (logout) and navigate is done rendering
   useEffect(() => {
     if (!user && !loading) {
       navigate("/");
@@ -29,67 +26,68 @@ function RoomPage() {
   }
 
   const handleLogout = () => {
-    // Logic for logging out
     const auth = getAuth();
     signOut(auth)
       .then(() => {
-        //Successful (Should navigate back to login)
+        console.log("Logged out");
+        navigate("/"); // Ensure the user is redirected after logout
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Error during logout:", err);
       });
-    console.log("Logged out");
   };
 
   const handleAccount = () => {
-    // Logic for navigating to the account page
-    console.log(user);
+    console.log("Account button clicked. User:", user);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-900 via-blue-800 to-cyan-500">
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Video Background */}
+      <video autoPlay loop muted className="w-full h-screen object-cover">
+        <source src="/backgrounds/backgroundThree.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div className="absolute inset-0 bg-black bg-opacity-30 z-10"></div>
+
       {/* Navbar */}
-      <nav className="flex justify-between items-center bg-blue-600 px-8 py-4">
-        <h1 className="text-white text-3xl font-bold">StudySync</h1>
+      <nav className="absolute top-0 left-0 w-full bg-white bg-opacity-80 py-4 z-30 flex justify-between items-center">
+        <h1 className="text-black text-3xl font-bold ml-8">StudySync</h1>
         <div className="flex space-x-4">
           <button
-            className="text-white hover:underline"
+            className="text-black hover:text-gray-500 hover:scale-105 transition-transform duration-200 ease-in-out"
             onClick={handleAccount}
           >
             Account
           </button>
-          <button className="text-white hover:underline" onClick={handleLogout}>
+          <button
+            className="text-black hover:text-gray-500 hover:scale-105 transition-transform duration-200 ease-in-out"
+            onClick={handleLogout}
+          >
             Logout
           </button>
         </div>
       </nav>
-
-      {/* Main Content */}
-      <div className="flex justify-center items-center min-h-[80vh]">
+      <div className="absolute inset-0 flex justify-center items-center z-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Join a Room */}
+          {/* Join Room */}
           <div
-            className="flex justify-center items-center bg-blue-500 hover:bg-blue-700 text-white font-bold text-2xl rounded-lg p-12 cursor-pointer"
+            className="flex justify-center items-center bg-white bg-opacity-70 font-bold text-2xl rounded-lg p-12 cursor-pointer hover:shadow-xl"
             onClick={() => setShowJoinPopup(true)}
           >
             Join a Room
           </div>
 
-          {/* Create a Room */}
+          {/* Create Room */}
           <div
-            className="flex justify-center items-center bg-green-500 hover:bg-green-700 text-white font-bold text-2xl rounded-lg p-12 cursor-pointer"
+            className="flex justify-center items-center bg-white bg-opacity-70 font-bold text-2xl rounded-lg p-12 cursor-pointer hover:shadow-xl"
             onClick={() => setShowCreatePopup(true)}
           >
             Create a Room
           </div>
-          <div
-            className="flex justify-center items-center bg-blue-500 hover:bg-blue-700 text-white font-bold text-2xl rounded-lg p-12 cursor-pointer"
-            onClick={() => navigate("/timer")}
-          >
-            Open Timer
-          </div>
         </div>
       </div>
+
       {showCreatePopup && <CreateRoomPopup onClose={() => setShowCreatePopup(false)} />}
       {showJoinPopup && <JoinRoomPopup onClose={() => setShowJoinPopup(false)} />}
     </div>

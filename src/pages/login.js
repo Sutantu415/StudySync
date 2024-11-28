@@ -24,7 +24,7 @@ function LoginPage() {
 
     return (
         <div className="flex h-screen">
-            {/* Left side: Illustration */}
+            {/* Illustration */}
             <div className="w-2/3 relative">
                 <img
                     src="https://static.vecteezy.com/system/resources/previews/002/779/389/original/student-woman-with-laptop-studying-on-online-course-online-education-concept-illustration-flat-vector.jpg"
@@ -33,10 +33,9 @@ function LoginPage() {
                 />
             </div>
 
-            {/* Right side: Login Form */}
+            {/* Login Form */}
             <div className="w-1/2 flex flex-col justify-center items-center bg-white">
                 <div className="w-3/4 max-w-md">
-                    {/* Logo */}
                     <div className="flex justify-center mb-6">
                         <img
                             src="https://th.bing.com/th/id/OIP.6sNdGNp6mbrkxV4c29qi1QHaGt?rs=1&pid=ImgDetMain"
@@ -44,8 +43,6 @@ function LoginPage() {
                             className="h-16"
                         />
                     </div>
-
-                    {/* Form Title */}
                     <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
 
                     {/* Email Input */}
@@ -86,13 +83,12 @@ function LoginPage() {
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                         <div className="flex justify-between mt-1">
-                            {/* Sign Up Button */}
+                            {/* Sign Up */}
                             <button
                                 onClick={() => navigate('/register')}
                                 className="text-sm text-blue-600 hover:underline">
                                 Sign Up
                             </button>
-                            {/* Forgot Password Button */}
                             <button
                                 onClick={() => navigate('/forgot-password')}
                                 className="text-sm text-blue-600 hover:underline">
@@ -100,7 +96,6 @@ function LoginPage() {
                             </button>
                         </div>
                     </div>
-
                     {/* Login Button */}
                     <div className="flex justify-center">
                         <button
@@ -109,8 +104,6 @@ function LoginPage() {
                             Login
                         </button>
                     </div>
-
-                    {/* Error Message */}
                     {error && (
                         <p className="mt-4 text-sm text-red-500 text-center">
                             Invalid email or password.
