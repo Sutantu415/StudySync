@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { db } from "../../firebase/firebaseConfig";
-import { collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove, doc } from "firebase/firestore";
+import { collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove, doc, onSnapshot } from "firebase/firestore";
 import { useUser } from "../../contexts/userContext";
 
 function JoinRoomPopup({ onClose }) {
@@ -8,7 +8,30 @@ function JoinRoomPopup({ onClose }) {
   const [roomPass, setRoomPass] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [roomInfo, setRoomInfo] = useState(null); // Room info after joining
+  const [users, setUsers] = useState([]);
   const { user } = useUser();
+
+  useEffect(() => {
+    let unsubscribe;
+
+    if (roomInfo && roomInfo.id) {
+      const roomRef = doc(db, "rooms", roomInfo.id);
+
+      // Listener (real-time updates on room members)
+      unsubscribe = onSnapshot(roomRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const roomData = snapshot.data();
+          setUsers(roomData.users || []);
+        }
+      });
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [roomInfo]);
 
   const joinRoom = async () => {
     // Check for valid inputs
@@ -70,6 +93,7 @@ function JoinRoomPopup({ onClose }) {
     try {
       // Remove user from the room's user list
       const roomRef = doc(db, "rooms", roomInfo.id);
+      console.log(roomRef);
       await updateDoc(roomRef, {
         users: arrayRemove({ uid: user.uid, displayName: user.displayName }),
       });
@@ -121,10 +145,10 @@ function JoinRoomPopup({ onClose }) {
           <>
             <h2 className="text-2xl font-bold mb-4">Room Joined</h2>
             <p className="mb-2">Room Name: {roomInfo.roomName}</p>
-            <p className="mb-4">Host: {roomInfo.host[0]?.displayName || "Unknown"}</p>
+            <p className="mb-4">Host: {roomInfo.host.displayName || "Unknown"}</p>
             <p>Users in the Room:</p>
             <ul className="list-disc pl-5 mb-4">
-              {roomInfo.users.map((userObj) => (
+              {users.map((userObj) => (
                 <li key={userObj.uid}>
                   {userObj.displayName === user.displayName
                     ? `${userObj.displayName} (You)`
