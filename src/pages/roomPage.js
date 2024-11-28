@@ -17,11 +17,7 @@ function RoomPage() {
     }
   }, [loading, user, navigate]);
 
-  if (loading) {
-    return null;
-  }
-
-  if (!user) {
+  if (loading || !user) {
     return null;
   }
 
@@ -56,42 +52,53 @@ function RoomPage() {
         <div className="flex space-x-4">
           <button
             className="text-black hover:text-gray-500 hover:scale-105 transition-transform duration-200 ease-in-out"
-            onClick={handleAccount}
-          >
+            onClick={handleAccount} >
             Account
           </button>
           <button
             className="text-black hover:text-gray-500 hover:scale-105 transition-transform duration-200 ease-in-out"
-            onClick={handleLogout}
-          >
+            onClick={handleLogout}>
             Logout
           </button>
         </div>
       </nav>
-      <div className="absolute inset-0 flex justify-center items-center z-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Join Room */}
-          <div
-            className="flex justify-center items-center bg-white bg-opacity-70 font-bold text-2xl rounded-lg p-12 cursor-pointer hover:shadow-xl"
-            onClick={() => setShowJoinPopup(true)}
-          >
-            Join a Room
-          </div>
 
-          {/* Create Room */}
-          <div
-            className="flex justify-center items-center bg-white bg-opacity-70 font-bold text-2xl rounded-lg p-12 cursor-pointer hover:shadow-xl"
-            onClick={() => setShowCreatePopup(true)}
-          >
-            Create a Room
+      {/* Main Buttons */}
+      {!showCreatePopup && !showJoinPopup && (
+        <div className="absolute inset-0 flex justify-center items-center z-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Join Room */}
+            <div
+              className="flex justify-center items-center bg-white bg-opacity-70 font-bold text-2xl rounded-lg p-12 cursor-pointer hover:shadow-xl"
+              onClick={() => setShowJoinPopup(true)}>
+              Join a Room
+            </div>
+
+            {/* Create Room */}
+            <div
+              className="flex justify-center items-center bg-white bg-opacity-70 font-bold text-2xl rounded-lg p-12 cursor-pointer hover:shadow-xl"
+              onClick={() => setShowCreatePopup(true)}>
+              Create a Room
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {showCreatePopup && <CreateRoomPopup onClose={() => setShowCreatePopup(false)} />}
-      {showJoinPopup && <JoinRoomPopup onClose={() => setShowJoinPopup(false)} />}
+      {/* Popups */}
+      {showCreatePopup && (
+        <div className="absolute inset-0 z-50 flex justify-center items-center">
+          <CreateRoomPopup onClose={() => setShowCreatePopup(false)} />
+        </div>
+      )}
+
+      {showJoinPopup && (
+        <div className="absolute inset-0 z-50 flex justify-center items-center">
+          <JoinRoomPopup onClose={() => setShowJoinPopup(false)} />
+        </div>
+      )}
     </div>
   );
 }
 
 export default RoomPage;
+
