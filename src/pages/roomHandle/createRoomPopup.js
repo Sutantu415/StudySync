@@ -1,112 +1,144 @@
-import React, {useState} from 'react';
-import {db} from '../../firebase/firebaseConfig';
-import {addDoc, collection, deleteDoc, doc} from 'firebase/firestore';
-import {useUser} from '../../contexts/userContext';
+import React, { useEffect, useState } from "react";
+import { db } from "../../firebase/firebaseConfig";
+import { addDoc, collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+import { useUser } from "../../contexts/userContext";
 
-function CreateRoomPopup( {onClose} ) {
-    const [roomName, setRoomName] = useState('');
-    const [roomPass, setRoomPass] = useState('');
-    const [roomId, setRoomId] = useState('');
-    const [roomCreated, setRoomCreated] = useState(false);
-    const { user } = useUser();
+function CreateRoomPopup({ onClose }) {
+  const [roomName, setRoomName] = useState("");
+  const [roomPass, setRoomPass] = useState("");
+  const [roomId, setRoomId] = useState("");
+  const [roomCreated, setRoomCreated] = useState(false);
+  const [users, setUsers] = useState([]);
+  const { user } = useUser();
 
-    const createRoom = async () => {
-        // Check for valid inputs
-        if(!roomName || !roomPass) {
-            alert('Please enter a room name and password!');
-            return;
+  useEffect(() => {
+    let unsubscribe;
+
+    if (roomId) {
+      const roomRef = doc(db, "rooms", roomId);
+
+      // Listener (real-time updates on room members)
+      unsubscribe = onSnapshot(roomRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const roomData = snapshot.data();
+          setUsers(roomData.users || []); // Update users in real-time
         }
-        
-        // Try creating a room and adding it to the db
-        try {
-            const room = await addDoc(collection(db, 'rooms'), {
-                roomName,
-                roomPass,
-                users: [{ uid: user.uid, displayName: user.displayName }],
-                host: [{ uid: user.uid, displayName: user.displayName }],
-                maxUsers: 4
-            });
-            setRoomId(room.id);
-            setRoomCreated(true);
-        } catch (e) {
-            console.log(e);
-        }
+      });
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
     };
+  }, [roomId]);
 
-    const startSession = async() => {
-        console.log('Temporary Start');
-    };
+  const createRoom = async () => {
+    if (!roomName || !roomPass) {
+      alert("Please enter a room name and password!");
+      return;
+    }
 
-    const leaveRoom = async() => {
-        try {
-            // Get room from doc
-            const roomInfo = doc(db, 'rooms', roomId);
+    try {
+      const room = await addDoc(collection(db, "rooms"), {
+        roomName,
+        roomPass,
+        users: [{ uid: user.uid, displayName: user.displayName }],
+        host: { uid: user.uid, displayName: user.displayName },
+        maxUsers: 4,
+      });
+      setRoomId(room.id);
+      setRoomCreated(true);
+    } catch (e) {
+      console.error("Error creating room:", e);
+    }
+  };
 
-            // Delete document with room info
-            await deleteDoc(roomInfo);
+  const startSession = () => {
+    console.log("Start session clicked.");
+    // Implement session logic here if needed
+  };
 
-            onClose();
-        } catch (e) {
-            console.log(e);
-        }
-    };
+  const leaveRoom = async () => {
+    try {
+      if (!roomId) return;
 
-    return (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-                {!roomCreated ? (
-                    <>
-                        <h2 className="text-2xl font-bold mb-4">Create a Room</h2>
-                        <input
-                            type="text"
-                            placeholder="Room Name"
-                            value={roomName}
-                            onChange={(e) => setRoomName(e.target.value)}
-                            className="border p-2 mb-4 w-full"
-                        />
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            value={roomPass}
-                            onChange={(e) => setRoomPass(e.target.value)}
-                            className="border p-2 mb-4 w-full"
-                        />
-                        <button
-                            onClick={createRoom}
-                            className="bg-blue-500 text-white py-2 px-4 rounded w-full"
-                        >
-                            Create Room
-                        </button>
-                        <button onClick={onClose} className="mt-2 text-red-500 underline">
-                            Cancel
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <h2 className="text-2xl font-bold mb-4">Room Created</h2>
-                        <p>Users in the Room:</p>
-                        <ul className="list-disc pl-5 mb-4">
-                            <li>{user.displayName} (Host)</li>
-                        </ul>
-                        <div className="flex space-x-4">
-                            <button
-                                onClick={startSession}
-                                className="bg-green-500 text-white py-2 px-4 rounded"
-                            >
-                                Start Session
-                            </button>
-                            <button
-                                onClick={leaveRoom}
-                                className="bg-red-500 text-white py-2 px-4 rounded"
-                            >
-                                Leave Room
-                            </button>
-                        </div>
-                    </>
-                )}
+      const roomRef = doc(db, "rooms", roomId);
+      await deleteDoc(roomRef); // Delete the room document
+
+      setRoomId(""); // Reset room state
+      setRoomCreated(false);
+      onClose();
+    } catch (e) {
+      console.error("Error leaving room:", e);
+    }
+  };
+
+  return (
+    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        {!roomCreated ? (
+          <>
+            <h2 className="text-2xl font-bold mb-4">Create a Room</h2>
+            <input
+              type="text"
+              placeholder="Room Name"
+              value={roomName}
+              onChange={(e) => setRoomName(e.target.value)}
+              className="border p-2 mb-4 w-full"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={roomPass}
+              onChange={(e) => setRoomPass(e.target.value)}
+              className="border p-2 mb-4 w-full"
+            />
+            <button
+              onClick={createRoom}
+              className="bg-blue-500 text-white py-2 px-4 rounded w-full"
+            >
+              Create Room
+            </button>
+            <button
+              onClick={onClose}
+              className="mt-2 text-red-500 underline w-full"
+            >
+              Cancel
+            </button>
+          </>
+        ) : (
+          <>
+            <h2 className="text-2xl font-bold mb-4">Room Created</h2>
+            <p>Users in the Room:</p>
+            <ul className="list-disc pl-5 mb-4">
+              {users.map((userObj) => (
+                <li key={userObj.uid}>
+                  {userObj.displayName === user.displayName
+                    ? `${userObj.displayName} (Host)`
+                    : userObj.displayName}
+                </li>
+              ))}
+            </ul>
+            <div className="flex space-x-4">
+              <button
+                onClick={startSession}
+                className="bg-green-500 text-white py-2 px-4 rounded"
+              >
+                Start Session
+              </button>
+              <button
+                onClick={leaveRoom}
+                className="bg-red-500 text-white py-2 px-4 rounded"
+              >
+                Leave Room
+              </button>
             </div>
-        </div>
-    );
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
 
-export default CreateRoomPopup
+export default CreateRoomPopup;
