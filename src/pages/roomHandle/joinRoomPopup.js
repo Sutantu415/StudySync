@@ -121,7 +121,7 @@ function JoinRoomPopup({ onClose }) {
           <>
             <h2 className="text-2xl font-bold mb-4">Room Joined</h2>
             <p className="mb-2">Room Name: {roomInfo.roomName}</p>
-            <p className="mb-4">Host: {roomInfo.host.displayName}</p>
+            <p className="mb-4">Host: {roomInfo.host[0]?.displayName || "Unknown"}</p>
             <p>Users in the Room:</p>
             <ul className="list-disc pl-5 mb-4">
               {roomInfo.users.map((userObj) => (
