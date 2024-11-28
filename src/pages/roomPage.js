@@ -8,14 +8,21 @@ import JoinRoomPopup from "./roomHandle/joinRoomPopup";
 function RoomPage() {
   const { user, loading } = useUser();
   const navigate = useNavigate();
-  const [showCreatePopup, setShowCreatePopup] = useState(false);
-  const [showJoinPopup, setShowJoinPopup] = useState(false);
+  const [showCreatePopup, setShowCreatePopup] = useState(JSON.parse(localStorage.getItem("showCreatePopup")) || false);
+  const [showJoinPopup, setShowJoinPopup] = useState(JSON.parse(localStorage.getItem("showJoinPopup")) || false);
 
+  // Get user state (loading is for the time that fireauth takes to get user info)
   useEffect(() => {
     if (!user && !loading) {
       navigate("/");
     }
   }, [loading, user, navigate]);
+
+  // Store popup state so on refresh it'll be brought back
+  useEffect(() => {
+    localStorage.setItem("showCreatePopup", JSON.stringify(showCreatePopup));
+    localStorage.setItem("showJoinPopup", JSON.stringify(showJoinPopup));
+  }, [showCreatePopup, showJoinPopup]);
 
   if (loading || !user) {
     return null;
@@ -93,7 +100,7 @@ function RoomPage() {
 
       {showJoinPopup && (
         <div className="absolute inset-0 z-50 flex justify-center items-center">
-          <JoinRoomPopup onClose={() => setShowJoinPopup(false)} />
+          <JoinRoomPopup onClose={() => setShowJoinPopup(false)}/>
         </div>
       )}
     </div>

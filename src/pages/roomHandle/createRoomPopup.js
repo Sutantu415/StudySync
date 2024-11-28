@@ -6,8 +6,8 @@ import { useUser } from "../../contexts/userContext";
 function CreateRoomPopup({ onClose }) {
     const [roomName, setRoomName] = useState("");
     const [roomPass, setRoomPass] = useState("");
-    const [roomId, setRoomId] = useState("");
-    const [roomCreated, setRoomCreated] = useState(false);
+    const [roomId, setRoomId] = useState(localStorage.getItem("roomId") || "");
+    const [roomCreated, setRoomCreated] = useState(JSON.parse(localStorage.getItem("roomCreated")) || false);
     const [users, setUsers] = useState([]);
     const { user } = useUser();
 
@@ -32,6 +32,12 @@ function CreateRoomPopup({ onClose }) {
             }
         };
     }, [roomId]);
+
+    // We need to store whether a room was created + the id if it was in local storage to retrieve on refresh
+    useEffect(() => {
+        localStorage.setItem("roomCreated", JSON.stringify(roomCreated));
+        localStorage.setItem("roomId", roomId);
+    }, [roomId, roomCreated]);
 
     const createRoom = async () => {
         if (!roomName || !roomPass) {
@@ -68,6 +74,9 @@ function CreateRoomPopup({ onClose }) {
 
             setRoomId(""); // Reset room state
             setRoomCreated(false);
+            // Remove values from local storage
+            localStorage.removeItem("roomCreated");
+            localStorage.removeItem("roomId");
             onClose();
         } catch (e) {
             console.error("Error leaving room:", e);

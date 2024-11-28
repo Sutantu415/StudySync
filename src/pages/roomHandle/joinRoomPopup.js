@@ -17,7 +17,7 @@ function JoinRoomPopup({ onClose }) {
   const [roomName, setRoomName] = useState("");
   const [roomPass, setRoomPass] = useState("");
   const [errMsg, setErrMsg] = useState("");
-  const [roomInfo, setRoomInfo] = useState(null); // Room info after joining
+  const [roomInfo, setRoomInfo] = useState(JSON.parse(localStorage.getItem("roomInfo")) || null); // Room info after joining
   const [users, setUsers] = useState([]);
   const { user } = useUser();
 
@@ -43,12 +43,19 @@ function JoinRoomPopup({ onClose }) {
     };
   }, [roomInfo]);
 
+  // Store the room info as it changes so that if we refresh we can still display the room info
+  useEffect(() => {
+    localStorage.setItem("roomInfo", JSON.stringify(roomInfo));
+  }, [roomInfo]);
+
   const joinRoom = async () => {
+    // Make sure there is a valid room name and password
     if (!roomName || !roomPass) {
       setErrMsg("Please enter a room name and password!");
       return;
     }
 
+    // Try and get the room info with the given name and password
     try {
       const roomCollection = collection(db, "rooms");
 
@@ -60,23 +67,28 @@ function JoinRoomPopup({ onClose }) {
 
       const queryResult = await getDocs(roomQuery);
 
+      // If there wasn't a room then display proper error message
       if (queryResult.empty) {
         setErrMsg("Room not found or incorrect password!");
         return;
       }
 
+      // Else get room info
       const roomDoc = queryResult.docs[0];
       const roomData = roomDoc.data();
 
+      // If the room is full then bring up a message saying room is full
       if (roomData.users.length >= roomData.maxUsers) {
         setErrMsg("Room is full!");
         return;
       }
 
+      // Add user to the list of users in the room
       await updateDoc(roomDoc.ref, {
         users: arrayUnion({ uid: user.uid, displayName: user.displayName }),
       });
 
+      // Update our controlled variable of the room info to match with the additional user
       setRoomInfo({
         id: roomDoc.id,
         ...roomData,
@@ -90,12 +102,15 @@ function JoinRoomPopup({ onClose }) {
     }
   };
 
+  // Remove user from room and close the popup
   const leaveRoom = async () => {
     try {
       const roomRef = doc(db, "rooms", roomInfo.id);
       await updateDoc(roomRef, {
         users: arrayRemove({ uid: user.uid, displayName: user.displayName }),
       });
+      // Remove room info from local storage
+      localStorage.removeItem("roomInfo");
       onClose();
     } catch (e) {
       console.error("Error leaving room:", e);
