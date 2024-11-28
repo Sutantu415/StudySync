@@ -22,8 +22,8 @@ function CreateRoomPopup( {onClose} ) {
             const room = await addDoc(collection(db, 'rooms'), {
                 roomName,
                 roomPass,
-                users: [user.uid],
-                host: user.uid,
+                users: [{ uid: user.uid, displayName: user.displayName }],
+                host: [{ uid: user.uid, displayName: user.displayName }],
                 maxUsers: 4
             });
             setRoomId(room.id);

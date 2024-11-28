@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { db } from "../../firebase/firebaseConfig";
-import { collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove, doc} from "firebase/firestore";
+import { collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove, doc } from "firebase/firestore";
 import { useUser } from "../../contexts/userContext";
 
 function JoinRoomPopup({ onClose }) {
@@ -49,14 +49,14 @@ function JoinRoomPopup({ onClose }) {
 
       // Add user to the room
       await updateDoc(roomDoc.ref, {
-        users: arrayUnion(user.uid),
+        users: arrayUnion({ uid: user.uid, displayName: user.displayName }),
       });
 
       // Update roomInfo state with room details
       setRoomInfo({
         id: roomDoc.id,
         ...roomData,
-        users: [...roomData.users, user.uid], // Add current user to local state
+        users: [...roomData.users, { uid: user.uid, displayName: user.displayName }], // Add current user to local state
       });
 
       setErrMsg(""); // Clear error message
@@ -71,7 +71,7 @@ function JoinRoomPopup({ onClose }) {
       // Remove user from the room's user list
       const roomRef = doc(db, "rooms", roomInfo.id);
       await updateDoc(roomRef, {
-        users: arrayRemove(user.uid),
+        users: arrayRemove({ uid: user.uid, displayName: user.displayName }),
       });
 
       // Close the popup
@@ -121,12 +121,14 @@ function JoinRoomPopup({ onClose }) {
           <>
             <h2 className="text-2xl font-bold mb-4">Room Joined</h2>
             <p className="mb-2">Room Name: {roomInfo.roomName}</p>
-            <p className="mb-4">Host: {roomInfo.host}</p>
+            <p className="mb-4">Host: {roomInfo.host.displayName}</p>
             <p>Users in the Room:</p>
             <ul className="list-disc pl-5 mb-4">
-              {roomInfo.users.map((uid) => (
-                <li key={uid}>
-                  {uid === user.uid ? `${uid} (You)` : uid}
+              {roomInfo.users.map((userObj) => (
+                <li key={userObj.uid}>
+                  {userObj.displayName === user.displayName
+                    ? `${userObj.displayName} (You)`
+                    : userObj.displayName}
                 </li>
               ))}
             </ul>
