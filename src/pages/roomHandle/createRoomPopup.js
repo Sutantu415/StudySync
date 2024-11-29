@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase/firebaseConfig";
-import { addDoc, collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useUser } from "../../contexts/userContext";
+import { useNavigate } from "react-router-dom";
 
 function CreateRoomPopup({ onClose }) {
     const [roomName, setRoomName] = useState("");
@@ -10,6 +11,7 @@ function CreateRoomPopup({ onClose }) {
     const [roomCreated, setRoomCreated] = useState(JSON.parse(localStorage.getItem("roomCreated")) || false);
     const [users, setUsers] = useState([]);
     const { user } = useUser();
+    const navigate = useNavigate();
 
     useEffect(() => {
         let unsubscribe;
@@ -39,6 +41,27 @@ function CreateRoomPopup({ onClose }) {
         localStorage.setItem("roomId", roomId);
     }, [roomId, roomCreated]);
 
+    // Once the start session button is pressed
+    // Navigate all users in the room to the session page
+    useEffect(() => {
+        if (roomId) {
+            const room = doc(db, "rooms", roomId);
+            const unsubscribe = onSnapshot(room, (snapshot) => {
+                if (snapshot.exists()) {
+                    const roomData = snapshot.data();
+                    if (roomData.sessionStarted) {
+                        navigate(`/session/${roomId}`);
+                    }
+                }
+            });
+    
+            return () => {
+                unsubscribe();
+            };
+        }
+    }, [roomId, navigate]);
+    
+
     const createRoom = async () => {
         if (!roomName || !roomPass) {
             alert("Please enter a room name and password!");
@@ -52,6 +75,7 @@ function CreateRoomPopup({ onClose }) {
                 users: [{ uid: user.uid, displayName: user.displayName }],
                 host: { uid: user.uid, displayName: user.displayName },
                 maxUsers: 4,
+                sessionStarted: false,
             });
             setRoomId(room.id);
             setRoomCreated(true);
@@ -60,8 +84,11 @@ function CreateRoomPopup({ onClose }) {
         }
     };
 
-    const startSession = () => {
-        console.log("Start session clicked.");
+    const startSession = async () => {
+        const room = doc(db, 'rooms', roomId);
+        await updateDoc(room, {
+            sessionStarted: true,
+        });
         // Implement session logic here if needed
     };
 
