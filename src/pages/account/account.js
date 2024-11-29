@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom"; // Import the hook for navigation
 import "./account.css";
-import ProfileImage from "/Users/brandonwong/Documents/GitHub/StudySync/src/assets/image.png"; // Import your image or use a URL
-import { useUser } from "/Users/brandonwong/Documents/GitHub/StudySync/src/contexts/userContext.js";
+import ProfileImage from "../../assets/image.png"; // Import your image or use a URL
+import { useUser } from "../../contexts/userContext";
 
 function AccountPage() {
     const navigate = useNavigate(); // Initialize the navigate function
