@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/login";
 import RoomPage from "./pages/roomPage";
 import RegisterPage from "./pages/register";
+import SessionPage from "./pages/session";
 import "./App.css";
 import TimerPage from "./pages/timer/timer";
 import SettingsPage from "./components/timerComponents/Settings";
@@ -20,6 +21,7 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/home" element={<RoomPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/session/:roomId" element={<SessionPage />} />
 
         <Route
           path="/timer"

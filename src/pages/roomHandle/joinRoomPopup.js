@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import { useUser } from "../../contexts/userContext";
+import { useNavigate } from "react-router-dom";
 
 function JoinRoomPopup({ onClose }) {
   const [roomName, setRoomName] = useState("");
@@ -20,6 +21,7 @@ function JoinRoomPopup({ onClose }) {
   const [roomInfo, setRoomInfo] = useState(JSON.parse(localStorage.getItem("roomInfo")) || null); // Room info after joining
   const [users, setUsers] = useState([]);
   const { user } = useUser();
+  const navigate = useNavigate();
 
   useEffect(() => {
     let unsubscribe;
@@ -47,6 +49,26 @@ function JoinRoomPopup({ onClose }) {
   useEffect(() => {
     localStorage.setItem("roomInfo", JSON.stringify(roomInfo));
   }, [roomInfo]);
+  
+    // Once the start session button is pressed
+    // Navigate all users in the room to the session page
+    useEffect(() => {
+      if (roomInfo && roomInfo.id) {
+          const room = doc(db, "rooms", roomInfo.id);
+          const unsubscribe = onSnapshot(room, (snapshot) => {
+              if (snapshot.exists()) {
+                  const roomData = snapshot.data();
+                  if (roomData.sessionStarted) {
+                      navigate(`/session/${roomInfo.id}`);
+                  }
+              }
+          });
+  
+          return () => {
+              unsubscribe();
+          };
+      }
+  }, [roomInfo, navigate]);
 
   const joinRoom = async () => {
     // Make sure there is a valid room name and password
@@ -80,6 +102,12 @@ function JoinRoomPopup({ onClose }) {
       // If the room is full then bring up a message saying room is full
       if (roomData.users.length >= roomData.maxUsers) {
         setErrMsg("Room is full!");
+        return;
+      }
+
+      // If the session already started then bring a message saying session in progress
+      if (roomData.sessionStarted) {
+        setErrMsg("Session already started!");
         return;
       }
 
