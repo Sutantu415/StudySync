@@ -41,7 +41,7 @@ function RoomPage() {
   };
 
   const handleAccount = () => {
-    console.log("Account button clicked. User:", user);
+    navigate("/account");
   };
 
   return (
