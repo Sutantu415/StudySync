@@ -24,7 +24,8 @@ jobs:
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}  # Use the correct secret
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           expires: 7d
           entryPoint: .
           firebaseToolsVersion: latest
+          channelId: preview-${{ github.sha }}   # Unique channel ID based on commit SHA
