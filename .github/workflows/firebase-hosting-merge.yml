@@ -16,10 +16,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js (v18)
         uses: actions/setup-node@v2
         with:
-          node-version: '14'  # Ensure you're using the right Node version
+          node-version: '18'  # Set Node.js version to 18 (or >= 18)
 
       - name: Install dependencies
         run: npm install
