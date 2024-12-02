@@ -89,7 +89,13 @@ function CreateRoomPopup({ onClose }) {
     await updateDoc(room, {
       sessionStarted: true,
     });
-    // Implement session logic here if needed
+
+    //Handle local variables (reset on return)
+    setRoomCreated(false);
+    // Remove values from local storage
+    localStorage.removeItem("roomCreated");
+    localStorage.removeItem("roomId");
+    localStorage.setItem("showCreatePopup", false);
   };
 
   const leaveRoom = async () => {

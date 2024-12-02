@@ -34,6 +34,12 @@ function JoinRoomPopup({ onClose }) {
         if (snapshot.exists()) {
           const roomData = snapshot.data();
           setUsers(roomData.users || []);
+        } else {
+          if(user.uid !== roomInfo?.host?.uid) {
+            alert("Host has closed the lobby!");
+          }
+          localStorage.removeItem("roomInfo");
+          onClose();
         }
       });
     }
@@ -43,7 +49,7 @@ function JoinRoomPopup({ onClose }) {
         unsubscribe();
       }
     };
-  }, [roomInfo]);
+  }, [roomInfo, onClose, user.uid]);
 
   // Store the room info as it changes so that if we refresh we can still display the room info
   useEffect(() => {

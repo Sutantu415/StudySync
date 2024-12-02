@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../firebase/firebaseConfig";
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc, deleteDoc, arrayRemove } from "firebase/firestore";
 import { useUser } from "../contexts/userContext";
 import Chat from "./Chat";
 
@@ -32,12 +32,18 @@ function SessionPage() {
         }
       } else {
         // If the room is deleted (host leaves), redirect everyone to the RoomPage
-        navigate("/");
+        // Remove room info and popup from local storage
+        if(user.uid !== roomData?.host.uid) {
+          alert('Host has left, room is shutting down!');
+        }
+        localStorage.removeItem("roomInfo");
+        localStorage.setItem("showJoinPopup", false);
+        navigate('/home');
       }
     });
 
     return () => unsubscribe();
-  }, [roomId, navigate]);
+  }, [roomId, navigate, user.uid, roomData?.host.uid]);
 
   // Update the timer in Firestore
   const updateTimer = useCallback(async (newTimerState) => {
@@ -66,6 +72,36 @@ function SessionPage() {
       };
       updateTimer(updatedTimer);
     }
+  };
+
+  // Handle room leaving if leave room is pressed
+  const handleLeave = async () => {
+    if (user.uid === roomData.host.uid) {
+      // Shut down the room and everyone goes back to the home page (function similar to leave room in createRoomPopup)
+      console.log("Host pressed leave");
+      try {
+        if (!roomId) return;
+  
+        const roomRef = doc(db, "rooms", roomId);
+        await deleteDoc(roomRef); // Delete the room document
+      } catch (e) {
+        console.error("Error leaving room:", e);
+      }
+    } else {
+      //Handle a user leaving the room (function similar to leave room in joinRoomPopup)
+      try {
+        const roomRef = doc(db, "rooms", roomId);
+        await updateDoc(roomRef, {
+          users: arrayRemove({ uid: user.uid, displayName: user.displayName }),
+        });
+        // Remove room info and popup from local storage
+        localStorage.removeItem("roomInfo");
+        localStorage.setItem("showJoinPopup", false);
+      } catch (e) {
+        console.error("Error leaving room:", e);
+      }
+    }
+    navigate('/home');
   };
 
   // Timer countdown logic
@@ -100,7 +136,7 @@ function SessionPage() {
       <nav className="absolute top-0 left-0 w-full bg-white bg-opacity-80 py-4 z-30 flex justify-between items-center">
         <h1 className="text-black text-3xl font-bold ml-8">StudySync</h1>
         <button
-          onClick={() => navigate("/")}
+          onClick={handleLeave}
           className="text-black hover:text-gray-500 hover:scale-105 transition-transform duration-200 ease-in-out mr-8">
           Leave
         </button>
