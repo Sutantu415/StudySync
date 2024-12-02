@@ -17,6 +17,7 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [workMinutes, setWorkMinutes] = useState(25);
   const [breakMinutes, setBreakMinutes] = useState(5);
+  const [longBreakMinutes, setLongBreakMinutes] = useState(60);
 
   return (
     <Router>
@@ -35,8 +36,10 @@ function App() {
                 setShowSettings,
                 workMinutes,
                 breakMinutes,
+                longBreakMinutes,
                 setWorkMinutes,
                 setBreakMinutes,
+                setLongBreakMinutes,
               }}
             >
               {showSettings ? <SettingsPage /> : <TimerPage />}
