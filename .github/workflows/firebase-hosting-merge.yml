@@ -19,19 +19,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'  # Make sure the Node version matches your project's version
+          node-version: '14'  # Ensure you're using the right Node version
 
       - name: Install dependencies
         run: npm install
 
       - name: Build React app
-        run: npm run build
+        run: npm run build  # This will generate the 'build/' directory
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           expires: 7d
-          entryPoint: build   # Make sure it's the correct folder where your React build is generated
           firebaseToolsVersion: latest
-          channelId: preview-${{ github.sha }}  # Unique channel ID based on commit SHA
+          channelId: preview-${{ github.sha }}
