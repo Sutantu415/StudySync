@@ -34,7 +34,8 @@ function RegistrationPage() {
 
     setSubmitted(true);
 
-    if (!emailError && !usernameError && !passwordError) {
+    if (emailError && usernameError && passwordError) {
+      console.log("Testing");
       signUp();
     }
   };
