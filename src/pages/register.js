@@ -10,30 +10,32 @@ function RegistrationPage() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [usernameError, setusernameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
 
   const patterns = {
     email: /\w+@\w+.com/i,
     name: /\w{5,}/i,
-    password: /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/
+    password: /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/
   };
 
   const validate = () => {
     if (!email || !name || !password) {
-      setError(true);
+      alert("Ensure all fields are filled!");
       return;
     }
 
-    if (
-      patterns.email.test(email) &&
-      patterns.name.test(name) &&
-      patterns.password.test(password)
-    ) {
-      setError(false);
+    setEmailError(patterns.email.test(email));
+    setusernameError(patterns.name.test(name));
+    setPasswordError(patterns.password.test(password));
+
+    setSubmitted(true);
+
+    if (!emailError && !usernameError && !passwordError) {
       signUp();
-    } else {
-      setError(true);
     }
   };
 
@@ -147,9 +149,19 @@ function RegistrationPage() {
               Login
             </button>
           </div>
-          {error && (
+          {!emailError && submitted && (
             <p className="mt-4 text-sm text-red-500 text-center">
-              Please ensure all fields are valid.
+              Ensure that email follows this pattern: "email@domain.com"
+            </p>
+          )}
+          {!usernameError && submitted && (
+            <p className="mt-4 text-sm text-red-500 text-center">
+              Username must contain atleast 5 characters!
+            </p>
+          )}
+          {!passwordError && submitted && (
+            <p className="mt-4 text-sm text-red-500 text-center">
+              Password must be 6 characters long, contain one special character, capital letter, and 3 numbers
             </p>
           )}
         </div>
