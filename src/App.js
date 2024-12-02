@@ -11,6 +11,8 @@ import SettingsPage from "./components/timerComponents/Settings";
 import { useState } from "react";
 import SettingsContext from "./components/timerComponents/SettingsContext";
 
+
+//function app for routes
 function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [workMinutes, setWorkMinutes] = useState(25);
