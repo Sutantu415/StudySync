@@ -1,3 +1,13 @@
+name: Firebase Hosting Deploy
+
+on:
+  push:
+    branches:
+      - main  # This triggers the workflow when code is pushed to the 'main' branch
+  pull_request:
+    branches:
+      - main  # This triggers the workflow for pull requests targeting the 'main' branch
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -5,15 +15,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Run the build script
       - name: Build
         run: npm run build
 
-      # Deploy to Firebase Hosting
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
