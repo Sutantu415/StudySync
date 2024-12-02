@@ -49,25 +49,25 @@ function JoinRoomPopup({ onClose }) {
   useEffect(() => {
     localStorage.setItem("roomInfo", JSON.stringify(roomInfo));
   }, [roomInfo]);
-  
-    // Once the start session button is pressed
-    // Navigate all users in the room to the session page
-    useEffect(() => {
-      if (roomInfo && roomInfo.id) {
-          const room = doc(db, "rooms", roomInfo.id);
-          const unsubscribe = onSnapshot(room, (snapshot) => {
-              if (snapshot.exists()) {
-                  const roomData = snapshot.data();
-                  if (roomData.sessionStarted) {
-                      navigate(`/session/${roomInfo.id}`);
-                  }
-              }
-          });
-  
-          return () => {
-              unsubscribe();
-          };
-      }
+
+  // Once the start session button is pressed
+  // Navigate all users in the room to the session page
+  useEffect(() => {
+    if (roomInfo && roomInfo.id) {
+      const room = doc(db, "rooms", roomInfo.id);
+      const unsubscribe = onSnapshot(room, (snapshot) => {
+        if (snapshot.exists()) {
+          const roomData = snapshot.data();
+          if (roomData.sessionStarted) {
+            navigate(`/session/${roomInfo.id}`);
+          }
+        }
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
   }, [roomInfo, navigate]);
 
   const joinRoom = async () => {
@@ -158,7 +158,7 @@ function JoinRoomPopup({ onClose }) {
                 placeholder="Room Name"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring focus:ring-blue-300"/>
+                className="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring focus:ring-blue-300" />
               <input
                 type="password"
                 placeholder="Password"

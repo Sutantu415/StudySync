@@ -1,19 +1,19 @@
 :root {
-    --margin-size: 15px;
+  --margin-size: 15px;
 }
 
 input {
-    width:300px;
-    height: 50px;
-    display: block;
-    margin: var(--margin-size);
-    border-radius: 10px;
+  width: 300px;
+  height: 50px;
+  display: block;
+  margin: var(--margin-size);
+  border-radius: 10px;
 }
 
 input[placeholder] {
-    padding-left: 10px;
+  padding-left: 10px;
 }
 
 a {
-    margin: var(--margin-size);
+  margin: var(--margin-size);
 }

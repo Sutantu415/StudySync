@@ -100,7 +100,7 @@ function RoomPage() {
 
       {showJoinPopup && (
         <div className="absolute inset-0 z-50 flex justify-center items-center">
-          <JoinRoomPopup onClose={() => setShowJoinPopup(false)}/>
+          <JoinRoomPopup onClose={() => setShowJoinPopup(false)} />
         </div>
       )}
     </div>

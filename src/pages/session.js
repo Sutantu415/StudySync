@@ -3,10 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../firebase/firebaseConfig";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useUser } from "../contexts/userContext";
+import Chat from "./Chat";
 
 function SessionPage() {
   const { roomId } = useParams(); // roomId comes from the URL
-  const { user } = useUser();
+  const { user, loading } = useUser();
   const navigate = useNavigate();
 
   const [roomData, setRoomData] = useState(null); // Room details
@@ -81,7 +82,9 @@ function SessionPage() {
       if (interval) clearInterval(interval);
     };
   }, [timer.isRunning, timer.timeRemaining, timer, updateTimer]);
-
+  if (!user || loading) {
+    return <div>Loading...</div>; // Show a loading state
+  }
   if (!roomData) return null;
 
   return (
@@ -125,6 +128,9 @@ function SessionPage() {
             </button>
           </div>
         )}
+        <div className="chat-container">
+          <Chat roomId={roomId} />
+        </div>
       </div>
     </div>
   );
