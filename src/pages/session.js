@@ -177,7 +177,7 @@ function SessionPage() {
   return (
     <div className="relative min-h-screen overflow-hidden">
       <video autoPlay loop muted className="w-full h-screen object-cover">
-        <source src="/backgrounds/backgroundThree.mp4" type="video/mp4" />
+        <source src="/backgrounds/backgroundFour.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       <div className="absolute inset-0 bg-black bg-opacity-30 z-10"></div>
