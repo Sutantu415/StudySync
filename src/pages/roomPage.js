@@ -6,10 +6,10 @@ import CreateRoomPopup from "./roomHandle/createRoomPopup";
 import JoinRoomPopup from "./roomHandle/joinRoomPopup";
 
 function RoomPage() {
-  const { user, loading } = useUser();
+  const { user, userDoc, loading } = useUser();
   const navigate = useNavigate();
-  const [showCreatePopup, setShowCreatePopup] = useState(JSON.parse(localStorage.getItem("showCreatePopup")) || false);
-  const [showJoinPopup, setShowJoinPopup] = useState(JSON.parse(localStorage.getItem("showJoinPopup")) || false);
+  const [showCreatePopup, setShowCreatePopup] = useState(JSON.parse(sessionStorage.getItem("showCreatePopup")) || false);
+  const [showJoinPopup, setShowJoinPopup] = useState(JSON.parse(sessionStorage.getItem("showJoinPopup")) || false);
 
   // Get user state (loading is for the time that fireauth takes to get user info)
   useEffect(() => {
@@ -20,8 +20,8 @@ function RoomPage() {
 
   // Store popup state so on refresh it'll be brought back
   useEffect(() => {
-    localStorage.setItem("showCreatePopup", JSON.stringify(showCreatePopup));
-    localStorage.setItem("showJoinPopup", JSON.stringify(showJoinPopup));
+    sessionStorage.setItem("showCreatePopup", JSON.stringify(showCreatePopup));
+    sessionStorage.setItem("showJoinPopup", JSON.stringify(showJoinPopup));
   }, [showCreatePopup, showJoinPopup]);
 
   if (loading || !user) {
@@ -48,7 +48,7 @@ function RoomPage() {
     <div className="relative min-h-screen overflow-hidden">
       {/* Video Background */}
       <video autoPlay loop muted className="w-full h-screen object-cover">
-        <source src="/backgrounds/backgroundFour.mp4" type="video/mp4" />
+        <source src={`/backgrounds/${userDoc.background}.mp4`} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       <div className="absolute inset-0 bg-black bg-opacity-30 z-10"></div>

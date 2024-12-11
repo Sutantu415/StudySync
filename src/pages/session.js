@@ -35,8 +35,8 @@ function SessionPage() {
         if (user.uid !== roomData?.host.uid) {
           alert("Host has left, room is shutting down!");
         }
-        localStorage.removeItem("roomInfo");
-        localStorage.setItem("showJoinPopup", false);
+        sessionStorage.removeItem("roomInfo");
+        sessionStorage.setItem("showJoinPopup", false);
         navigate("/home");
       }
     });
@@ -149,7 +149,26 @@ function SessionPage() {
   const handleLeave = async () => {
     if (user.uid === roomData.host.uid) {
       try {
+        // Check for a messages collection, if it exists, delete then delete the room doc
+        // Reason being the room document isn't properly deleting when a message collection is present
         const roomRef = doc(db, "rooms", roomId);
+
+        // Before deleting the document we have to delete every document in the messages sub collection
+        // In the event that messsages were typed in the session room
+        const messageCollection = roomRef.collection("messages");
+
+        // Create a batch (essentially a queue) that we can add all the delete message docs to
+        const batch = db.batch();
+
+        // Add any/all documents in the message collection to the batch to delete 
+        messageCollection.forEach((msg) => {
+          batch.deleteDoc(msg.ref);
+        });
+
+        // Execute all the deletes we queued
+        await batch.commit();
+
+        // Delete the room document (this should properly delete it from firebase with the batch now)
         await deleteDoc(roomRef);
       } catch (e) {
         console.error("Error leaving room:", e);
@@ -160,8 +179,8 @@ function SessionPage() {
         await updateDoc(roomRef, {
           users: arrayRemove({ uid: user.uid, displayName: user.displayName }),
         });
-        localStorage.removeItem("roomInfo");
-        localStorage.setItem("showJoinPopup", false);
+        sessionStorage.removeItem("roomInfo");
+        sessionStorage.setItem("showJoinPopup", false);
       } catch (e) {
         console.error("Error leaving room:", e);
       }
@@ -177,7 +196,7 @@ function SessionPage() {
   return (
     <div className="relative min-h-screen overflow-hidden">
       <video autoPlay loop muted className="w-full h-screen object-cover">
-        <source src="/backgrounds/backgroundFour.mp4" type="video/mp4" />
+        <source src="/backgrounds/backgroundOne.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       <div className="absolute inset-0 bg-black bg-opacity-30 z-10"></div>

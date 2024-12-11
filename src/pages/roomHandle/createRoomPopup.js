@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 function CreateRoomPopup({ onClose }) {
   const [roomName, setRoomName] = useState("");
   const [roomPass, setRoomPass] = useState("");
-  const [roomId, setRoomId] = useState(localStorage.getItem("roomId") || "");
-  const [roomCreated, setRoomCreated] = useState(JSON.parse(localStorage.getItem("roomCreated")) || false);
+  const [roomId, setRoomId] = useState(sessionStorage.getItem("roomId") || "");
+  const [roomCreated, setRoomCreated] = useState(JSON.parse(sessionStorage.getItem("roomCreated")) || false);
   const [users, setUsers] = useState([]);
   const { user } = useUser();
   const navigate = useNavigate();
@@ -37,8 +37,8 @@ function CreateRoomPopup({ onClose }) {
 
   // We need to store whether a room was created + the id if it was in local storage to retrieve on refresh
   useEffect(() => {
-    localStorage.setItem("roomCreated", JSON.stringify(roomCreated));
-    localStorage.setItem("roomId", roomId);
+    sessionStorage.setItem("roomCreated", JSON.stringify(roomCreated));
+    sessionStorage.setItem("roomId", roomId);
   }, [roomId, roomCreated]);
 
   // Once the start session button is pressed
@@ -93,9 +93,9 @@ function CreateRoomPopup({ onClose }) {
     //Handle local variables (reset on return)
     setRoomCreated(false);
     // Remove values from local storage
-    localStorage.removeItem("roomCreated");
-    localStorage.removeItem("roomId");
-    localStorage.setItem("showCreatePopup", false);
+    sessionStorage.removeItem("roomCreated");
+    sessionStorage.removeItem("roomId");
+    sessionStorage.setItem("showCreatePopup", false);
   };
 
   const leaveRoom = async () => {
@@ -108,8 +108,8 @@ function CreateRoomPopup({ onClose }) {
       setRoomId(""); // Reset room state
       setRoomCreated(false);
       // Remove values from local storage
-      localStorage.removeItem("roomCreated");
-      localStorage.removeItem("roomId");
+      sessionStorage.removeItem("roomCreated");
+      sessionStorage.removeItem("roomId");
       onClose();
     } catch (e) {
       console.error("Error leaving room:", e);
@@ -136,6 +136,9 @@ function CreateRoomPopup({ onClose }) {
                 placeholder="Password"
                 value={roomPass}
                 onChange={(e) => setRoomPass(e.target.value)}
+                onKeyDown={(e) => {
+                  if(roomName && roomPass && e.key === 'Enter') { createRoom() }
+                }}
                 className="w-full p-3 border border-gray-300 rounded mb-6 focus:outline-none focus:ring focus:ring-blue-300"
               />
               <button

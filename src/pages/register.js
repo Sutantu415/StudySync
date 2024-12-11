@@ -48,9 +48,10 @@ function RegistrationPage() {
       await setDoc(doc(db, 'users', userCred.user.uid), {
         uid: userCred.user.uid,
         email: userCred.user.email,
-        displayname: name,
+        displayName: name,
         createdAt: new Date(),
-        pomodorosCompleted: 0
+        pomodorosCompleted: 0,
+        background: "backgroundOne"
       });
 
       navigate('/home');

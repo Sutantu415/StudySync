@@ -170,6 +170,9 @@ function JoinRoomPopup({ onClose }) {
                 placeholder="Password"
                 value={roomPass}
                 onChange={(e) => setRoomPass(e.target.value)}
+                onKeyDown={(e) => {
+                  if(roomName && roomPass && e.key === 'Enter') { joinRoom() }
+                }}
                 className="w-full p-3 border border-gray-300 rounded mb-6 focus:outline-none focus:ring focus:ring-blue-300" />
               {errMsg && <p className="text-red-500">{errMsg}</p>}
               <button
