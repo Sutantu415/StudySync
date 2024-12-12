@@ -6,7 +6,6 @@ import RegisterPage from "./pages/register";
 import SessionPage from "./pages/session";
 import "./App.css";
 import AccountPage from "./pages/account/account";
-import { useState } from "react";
 
 
 //function app for routes
