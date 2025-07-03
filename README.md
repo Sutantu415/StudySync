@@ -2,6 +2,10 @@
 
 StudySync is a collaborative virtual study room application designed to enhance productivity and focus. The app features a dynamic video background, room creation and joining options, and user authentication powered by Firebase. 
 
+## Use StudySync
+
+Try out our web-application [here](https://studysync-4a5fd.web.app/)
+
 ## Features
 
 - User authentication using Firebase Authentication.
